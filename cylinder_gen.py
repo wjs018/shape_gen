@@ -35,9 +35,7 @@ camera = Camera('location', [1.5*maxdist, 1.5*maxdist, 1.5*maxdist],
                 'look_at', [0, 0, 0])
 
 # Change to a folder to save the rendered image
-current_dir = os.getcwd()
-cylinder_dir = os.path.join(current_dir, "cylinder")
-os.chdir(cylinder_dir)
+data_dir = '/media/unraid/Datasets/shape_gen'
 
 # Number of cylinder images to generate
 num_cylinders = 2000
@@ -70,9 +68,13 @@ for i in range(num_cylinders):
     # Render the image
     outfile = "{:04d}_cylinder_{:.1f}_{:.1f}_{:.1f}_r_{:.1f}_h_{:.1f}.png".format(
         i, bottom[0], bottom[1], bottom[2], radius, height)
-    scene.render(outfile, width=800, height=600, antialiasing=0.01)
-
-
-
-
-
+    
+    # Render the image to the correct place, 20% of images for test set
+    if i < 0.2 * num_cylinders:
+        test_path = os.path.join(data_dir, 'test', 'cylinder')
+        os.chdir(test_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)
+    else:
+        train_path = os.path.join(data_dir, 'train', 'cylinder')
+        os.chdir(train_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)

@@ -19,21 +19,19 @@ ground = Plane([0, 1, 0], 0,
                       )
                 )
 
-# Maximum distance from origin for center of sphere
+# Maximum distance from origin for cube
 maxdist = 10
 
-# Radius bounds for sphere
+# Edgelength bounds for cube
 minedge = 0.5
 maxedge = 6
 
 # Create our camera
-camera = Camera('location', [1.5*maxdist, 1.5*maxdist, 1.5*maxdist],
+camera = Camera('location', [1.5 * maxdist, 1.5 * maxdist, 1.5 * maxdist],
                 'look_at', [0, 0, 0])
 
 # Change to a folder to save the rendered image
-current_dir = os.getcwd()
-cube_dir = os.path.join(current_dir, "cube")
-os.chdir(cube_dir)
+data_dir = '/media/unraid/Datasets/shape_gen'
 
 # Number of sphere images to generate
 num_cubes = 2000
@@ -50,7 +48,7 @@ for i in range(num_cubes):
     top = [bottom[0] + edge, bottom[1] + edge, bottom[2] + edge]
     
     # Generate random rgb value for cube
-    color = [random.uniform(0,1), random.uniform(0,1), random.uniform(0,1)]
+    color = [random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1)]
     
     # Create a cube
     cube = Box(bottom, top, Texture(Pigment('color', color)))
@@ -63,9 +61,13 @@ for i in range(num_cubes):
     # Render the image
     outfile = "{:04d}_cube_{:.1f}_{:.1f}_{:.1f}_r_{:.1f}".format(
         i, bottom[0], bottom[1], bottom[2], edge)
-    scene.render(outfile, width=800, height=600, antialiasing=0.01)
-
-
-
-
-
+    
+    # Render the image to the correct place, 20% of images for test set
+    if i < 0.2 * num_cubes:
+        test_path = os.path.join(data_dir, 'test', 'cube')
+        os.chdir(test_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)
+    else:
+        train_path = os.path.join(data_dir, 'train', 'cube')
+        os.chdir(train_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)

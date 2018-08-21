@@ -31,13 +31,11 @@ minheight = 0.5
 maxheight = 6
 
 # Create our camera
-camera = Camera('location', [1.5*maxdist, 1.5*maxdist, 1.5*maxdist],
+camera = Camera('location', [1.5 * maxdist, 1.5 * maxdist, 1.5 * maxdist],
                 'look_at', [0, 0, 0])
 
 # Change to a folder to save the rendered image
-current_dir = os.getcwd()
-cone_dir = os.path.join(current_dir, "cone")
-os.chdir(cone_dir)
+data_dir = '/media/unraid/Datasets/shape_gen'
 
 # Number of cone images to generate
 num_cones = 2000
@@ -57,7 +55,7 @@ for i in range(num_cones):
     top = [bottom[0], bottom[1] + height, bottom[2]]
     
     # Generate random rgb value for cube
-    color = [random.uniform(0,1), random.uniform(0,1), random.uniform(0,1)]
+    color = [random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1)]
     
     # Create a cone
     cone = Cone(bottom, base_radius, top, 0.0, Texture(Pigment('color', color)))
@@ -67,12 +65,16 @@ for i in range(num_cones):
                   included=["colors.inc"],
                   defaults=[Finish('ambient', 0.1, 'diffuse', 0.9)])
     
-    # Render the image
+    # output filename
     outfile = "{:04d}_cone_{:.1f}_{:.1f}_{:.1f}_r_{:.1f}_h_{:.1f}.png".format(
         i, bottom[0], bottom[1], bottom[2], base_radius, height)
-    scene.render(outfile, width=800, height=600, antialiasing=0.01)
-
-
-
-
-
+    
+    # Render the image to the correct place, 20% of images for test set
+    if i < 0.2 * num_cones:
+        test_path = os.path.join(data_dir, 'test', 'cone')
+        os.chdir(test_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)
+    else:
+        train_path = os.path.join(data_dir, 'train', 'cone')
+        os.chdir(train_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)

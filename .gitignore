@@ -1,7 +1,11 @@
+*.h5
 *.png
 examples/
+*.pov
 .project
 .pydevproject
+*.npy
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

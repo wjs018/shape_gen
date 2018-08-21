@@ -31,9 +31,7 @@ camera = Camera('location', [1.5*maxdist, 1.5*maxdist, 1.5*maxdist],
                 'look_at', [0, 0, 0])
 
 # Change to a folder to save the rendered image
-current_dir = os.getcwd()
-sphere_dir = os.path.join(current_dir, "sphere")
-os.chdir(sphere_dir)
+data_dir = '/media/unraid/Datasets/shape_gen'
 
 # Number of sphere images to generate
 num_spheres = 2000
@@ -62,9 +60,13 @@ for i in range(num_spheres):
     # Render the image
     outfile = "{:04d}_sphere_{:.1f}_{:.1f}_{:.1f}_r_{:.1f}".format(
         i, center[0], center[1], center[2], radius)
-    scene.render(outfile, width=800, height=600, antialiasing=0.01)
-
-
-
-
-
+    
+    # Render the image to the correct place, 20% of images for test set
+    if i < 0.2 * num_spheres:
+        test_path = os.path.join(data_dir, 'test', 'sphere')
+        os.chdir(test_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)
+    else:
+        train_path = os.path.join(data_dir, 'train', 'sphere')
+        os.chdir(train_path)
+        scene.render(outfile, width=244, height=244, antialiasing=0.01)
